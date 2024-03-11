@@ -1,0 +1,1 @@
+/usr/bin/gcc -g CMakeFiles/RSQ.dir/include/hello.c.o -o RSQ  /usr/lib/aarch64-linux-gnu/libssl.so /usr/lib/aarch64-linux-gnu/libcrypto.so 
