@@ -15,7 +15,9 @@
 #include "RSQ_data_structure.h"
 
 /*-------------------定义常量-------------------*/
+#define REQ_DATA_PATH ""
 #define RESP_DATA_PATH ""
+#define K_MAX 3
 /*-------------------结构定义------------------*/
 // x数据集对y数据集合的各个点的距离
 typedef struct distance{
@@ -86,6 +88,11 @@ RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int k,set_y 
 RESULT mrtree_write_resp(search_req * req, search_resp * resp);
 // 初始化一个叶节点
 RESULT mrtree_init_node(mr_node * node,int dim,int is_left, mr_node * right, mr_node * left,set_x * data,eTPSS ** distance, eTPSS * maxDistance);
+
 // 释放内存的点
-RESULT mrtree_free
+RESULT mrtree_free(mr_tree * tree);
+// 释放resp的节点
+RESULT mrtree_free_search(search_req * req,search_resp * resp);
+// 初始化最初的节点
+RESULT mrtree_init_origin_node(distance * d,RSQ_data * total,mr_node ** nodes);
 #endif// MRTREE_H

@@ -89,7 +89,7 @@ int et_ScalP(eTPSS *res,eTPSS *var,BIGNUM * num);
 
 /*
  * @desc:eTPSS乘法
- * @param res:乘法结果
+ * @param res:乘法结果,注意这个算法的res目前不能和a或者b为同一个指针，a与b为同一个指针暂时未发现问题
  * */
 int et_Mul(eTPSS *res,eTPSS *a,eTPSS *b);
 /*

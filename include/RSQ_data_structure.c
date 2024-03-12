@@ -50,7 +50,6 @@ RESULT RSQ_read_data(RSQ_data * data){
             BIGNUM *tmp = BN_CTX_get(CTX);
             fflush(stdout);
             // 转换为BIGNUM函数
-            // TODO 注意负数的处理
             if(!BN_dec2bn(&tmp,token)){
                 fprintf(stdout,"file have some error format about data\n");
                 return ERROR;

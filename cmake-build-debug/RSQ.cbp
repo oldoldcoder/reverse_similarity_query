@@ -57,6 +57,46 @@
 					<DistClean command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="mrtree_test">
+				<Option output="/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/mrtree_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/heqi/encryption_algorithm/reverse_similarity_query/include"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 mrtree_test"/>
+					<CompileFile command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="mrtree_test/fast">
+				<Option output="/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/mrtree_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/heqi/encryption_algorithm/reverse_similarity_query/include"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 mrtree_test/fast"/>
+					<CompileFile command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j96 -f &quot;/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="edit_cache">
 				<Option working_dir="/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug"/>
 				<Option type="4"/>
@@ -78,8 +118,41 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/RSQ_data_structure.c">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/RSQ_data_structure.h">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
 		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c">
 			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/mrtree.c">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/mrtree.h">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/utils.c">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/utils.h">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/test/mrtree_test.c">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
+		</Unit>
+		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/test/mrtree_test.h">
+			<Option target="RSQ"/>
+			<Option target="mrtree_test"/>
 		</Unit>
 		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>

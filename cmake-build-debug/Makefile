@@ -129,12 +129,53 @@ RSQ/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/build
 .PHONY : RSQ/fast
 
+#=============================================================================
+# Target rules for targets named mrtree_test
+
+# Build rule for target.
+mrtree_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mrtree_test
+.PHONY : mrtree_test
+
+# fast build rule for target.
+mrtree_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/build
+.PHONY : mrtree_test/fast
+
+include/RSQ_data_structure.o: include/RSQ_data_structure.c.o
+.PHONY : include/RSQ_data_structure.o
+
+# target to build an object file
+include/RSQ_data_structure.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/RSQ_data_structure.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.o
+.PHONY : include/RSQ_data_structure.c.o
+
+include/RSQ_data_structure.i: include/RSQ_data_structure.c.i
+.PHONY : include/RSQ_data_structure.i
+
+# target to preprocess a source file
+include/RSQ_data_structure.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/RSQ_data_structure.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.i
+.PHONY : include/RSQ_data_structure.c.i
+
+include/RSQ_data_structure.s: include/RSQ_data_structure.c.s
+.PHONY : include/RSQ_data_structure.s
+
+# target to generate assembly for a file
+include/RSQ_data_structure.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/RSQ_data_structure.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.s
+.PHONY : include/RSQ_data_structure.c.s
+
 include/hello.o: include/hello.c.o
 .PHONY : include/hello.o
 
 # target to build an object file
 include/hello.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.o
 .PHONY : include/hello.c.o
 
 include/hello.i: include/hello.c.i
@@ -143,6 +184,7 @@ include/hello.i: include/hello.c.i
 # target to preprocess a source file
 include/hello.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.i
 .PHONY : include/hello.c.i
 
 include/hello.s: include/hello.c.s
@@ -151,7 +193,89 @@ include/hello.s: include/hello.c.s
 # target to generate assembly for a file
 include/hello.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.s
 .PHONY : include/hello.c.s
+
+include/mrtree.o: include/mrtree.c.o
+.PHONY : include/mrtree.o
+
+# target to build an object file
+include/mrtree.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/mrtree.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/mrtree.c.o
+.PHONY : include/mrtree.c.o
+
+include/mrtree.i: include/mrtree.c.i
+.PHONY : include/mrtree.i
+
+# target to preprocess a source file
+include/mrtree.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/mrtree.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/mrtree.c.i
+.PHONY : include/mrtree.c.i
+
+include/mrtree.s: include/mrtree.c.s
+.PHONY : include/mrtree.s
+
+# target to generate assembly for a file
+include/mrtree.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/mrtree.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/mrtree.c.s
+.PHONY : include/mrtree.c.s
+
+include/utils.o: include/utils.c.o
+.PHONY : include/utils.o
+
+# target to build an object file
+include/utils.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/utils.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/utils.c.o
+.PHONY : include/utils.c.o
+
+include/utils.i: include/utils.c.i
+.PHONY : include/utils.i
+
+# target to preprocess a source file
+include/utils.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/utils.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/utils.c.i
+.PHONY : include/utils.c.i
+
+include/utils.s: include/utils.c.s
+.PHONY : include/utils.s
+
+# target to generate assembly for a file
+include/utils.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/utils.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/utils.c.s
+.PHONY : include/utils.c.s
+
+test/mrtree_test.o: test/mrtree_test.c.o
+.PHONY : test/mrtree_test.o
+
+# target to build an object file
+test/mrtree_test.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/test/mrtree_test.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o
+.PHONY : test/mrtree_test.c.o
+
+test/mrtree_test.i: test/mrtree_test.c.i
+.PHONY : test/mrtree_test.i
+
+# target to preprocess a source file
+test/mrtree_test.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/test/mrtree_test.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/test/mrtree_test.c.i
+.PHONY : test/mrtree_test.c.i
+
+test/mrtree_test.s: test/mrtree_test.c.s
+.PHONY : test/mrtree_test.s
+
+# target to generate assembly for a file
+test/mrtree_test.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/test/mrtree_test.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/test/mrtree_test.c.s
+.PHONY : test/mrtree_test.c.s
 
 # Help Target
 help:
@@ -162,9 +286,22 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... RSQ"
+	@echo "... mrtree_test"
+	@echo "... include/RSQ_data_structure.o"
+	@echo "... include/RSQ_data_structure.i"
+	@echo "... include/RSQ_data_structure.s"
 	@echo "... include/hello.o"
 	@echo "... include/hello.i"
 	@echo "... include/hello.s"
+	@echo "... include/mrtree.o"
+	@echo "... include/mrtree.i"
+	@echo "... include/mrtree.s"
+	@echo "... include/utils.o"
+	@echo "... include/utils.i"
+	@echo "... include/utils.s"
+	@echo "... test/mrtree_test.o"
+	@echo "... test/mrtree_test.i"
+	@echo "... test/mrtree_test.s"
 .PHONY : help
 
 
