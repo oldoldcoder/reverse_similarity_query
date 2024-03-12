@@ -56,8 +56,11 @@ RESULT mrtree_compute_xy_distance(distance * dis,RSQ_data * data){
                 et_Mul(&tmp2,&tmp,&tmp);
                 // 加和
                 et_Add(ousDis,ousDis,&tmp2);
+
             }
+            printDebugInfo(NULL,ousDis,__func__ ,__LINE__,"ousDis距离");
             // 插入堆里面
+            // TODO 欧式距离插入堆具有问题
             insert(dis->d[i],ousDis);
         }
     }
@@ -105,8 +108,10 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     BN_set_word(init_min,999999999999L);
 
     BIGNUM * two = BN_CTX_get(CTX);
-    BN_set_word(init_min,2);
+    BN_set_word(two,2);
     for(int i = 0 ; i < size; ++i) {
+        if(choose[i] == 1)
+            continue;
         et_Share(&min,init_min);
         if (nodes[i]->is_left_ndoe == TRUE) {
             targetA = nodes[i]->data->en_data;
@@ -114,7 +119,7 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
                 if (j == i)
                     continue;
                 // 已经被选了
-                if (choose[j] == 1 || choose[i] == 1)
+                if (choose[j] == 1)
                     continue;
                 if (nodes[j]->is_left_ndoe == TRUE){
                     targetB = nodes[j]->data->en_data;
@@ -123,6 +128,7 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
                     et_Share(&sum, ZERO);
                     // 计算两个etpss之间的距离
                     for (int z = 0; z < dim; ++z) {
+
                         et_Sub_cal_res_o(&tmp, targetA[z], targetB[z]);// 计算距离的平方
 
                         et_ScalP(&tmp,&tmp,two);
@@ -145,8 +151,8 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
                     et_Share(&sum, ZERO);
                     // 计算两个etpss之间的距离
                     for (int z = 0; z < dim; ++z) {
-                        et_ScalP(targetA[z],targetA[z],two);
-                        et_Sub_cal_res_o(&tmp, targetA[z], targetD[z]);// 计算距离的平方
+                        et_ScalP(&tmp2,targetA[z],two);
+                        et_Sub_cal_res_o(&tmp, &tmp2, targetD[z]);// 计算距离的平方
                         et_Mul(&tmp2,&tmp,&tmp);
                         et_Add(&sum, &sum, &tmp2);
                     }
@@ -185,8 +191,8 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
                     et_Share(&tmp2,ZERO);
                     // 计算两个etpss之间的距离
                     for (int z = 0; z < dim; ++z) {
-                        et_ScalP(targetB[z],targetB[z],two);
-                        et_Sub_cal_res_o(&tmp, targetC[z], targetB[z]);// 计算距离的平方
+                        et_ScalP(&tmp2,targetB[z],two);
+                        et_Sub_cal_res_o(&tmp, targetC[z], &tmp2);// 计算距离的平方
                         et_Mul(&tmp2,&tmp,&tmp);
                         et_Add(&sum, &sum, &tmp2);
                     }
@@ -211,6 +217,7 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
                         et_Add(&sum, &sum, &tmp2);
                     }
                 }
+
                 // 寻找 最小的距离
                 et_Sub(&res, &min, &sum);
                 if (res == 0){
@@ -221,17 +228,20 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
 
         }
 
-        // 记录最相近的点
-        choose[i] = 1;
-        choose[idxJ] = 1;
-        map[i] = idxJ;
-        map[idxJ] = i;
-        // idxJ恢复原值
-        idxJ = -1;
+        if(idxJ != -1){
+            // 记录最相近的点
+            choose[i] = 1;
+            choose[idxJ] = 1;
+            map[i] = idxJ;
+            map[idxJ] = i;
+            // idxJ恢复原值
+            idxJ = -1;
+        }
     }
     BN_clear(init_min);
     free_eTPSS(&tmp);
     free_eTPSS(&sum);
+    free_eTPSS(&tmp2);
     free_eTPSS(&min);
     // 释放内存
     for(int i = 0 ; i < dim ; ++i){
@@ -247,8 +257,10 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     return SUCCESS;
 
 }
+// TODO 内存空间的释放
 // 创建MR树的过程，返回的是根节点，自底向上构建树
 mr_node * mrtree_create_tree(mr_node ** nodes,int size){
+    printShowNodeVal(nodes,size);
     if(size == 1)
         return nodes[0];
     int res = -1;
@@ -256,9 +268,12 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size){
     // 首先计算如何合并
     int * map = (int *) malloc(sizeof(int) *size);
     for(int i = 0 ; i < size ; ++i){
-        map[i] = 0;
+        map[i] = -1;
     }
-    mrtree_compute_inner_distance(map,nodes,size);
+    if(mrtree_compute_inner_distance(map,nodes,size) != SUCCESS){
+        fprintf(stderr,"%s[%d]:计算节点内部距离出错\n",__func__ ,__LINE__);
+        return NULL;
+    }
     // 创建下一个数组来存储我们的点
     int next_size = 0;
     if(size % 2 != 0){
@@ -273,7 +288,8 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size){
     for(int i = 0 ; i < size ; ++i){
         if(map[i] == -1){
             // 遗留下一层
-            arr[next_size++] = nodes[i];
+            arr[next_idx++] = nodes[i];
+            break;
         }
         if(map[i] == -2)
             continue;
@@ -290,24 +306,34 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size){
             init_eTPSS(min);
             eTPSS  * max = (eTPSS *) malloc(sizeof (eTPSS));
             init_eTPSS(max);
-
             et_Sub(&res,targetA->range[j][0],targetB->range[j][0]);
+
+            printDebugInfo(NULL,targetA->range[j][0],__func__ ,__LINE__,"正在合成的维度最小值1");
+
+            printDebugInfo(NULL,targetB->range[j][0],__func__ ,__LINE__,"正在合成的维度最小值2");
             if(res == 0){
                 et_Copy(min,targetB->range[j][0]);
             }else{
                 et_Copy(min,targetA->range[j][0]);
             }
             et_Sub(&res,targetA->range[j][1],targetB->range[j][1]);
+
+            printDebugInfo(NULL,targetA->range[j][1],__func__ ,__LINE__,"正在合成的维度最小值1");
+
+            printDebugInfo(NULL,targetB->range[j][1],__func__ ,__LINE__,"正在合成的维度最小值2");
             if(res == 0){
                 et_Copy(max,targetA->range[j][1]);
             }else{
-                et_Copy(min,targetB->range[j][1]);
+                et_Copy(max,targetB->range[j][1]);
             }
             newNode->range[j][0] = min;
             newNode->range[j][1] = max;
         }
         arr[next_idx ++] = newNode;
     }
+    free(map);
+    // 释放存储指针的地址，而不释放具体的值
+    free(nodes);
     return mrtree_create_tree(arr,next_size);
 }
 void mrtree_search_o(mr_node* root,search_req * req, search_resp * resp){
@@ -318,19 +344,24 @@ void mrtree_search_o(mr_node* root,search_req * req, search_resp * resp){
     int dim = root->dim;
     if(root->is_left_ndoe == TRUE){
         eTPSS tmp,tmp2;
+        printDebugInfo(NULL,root->maxDistance,__func__ ,__LINE__,"叶子节点的最大距离");
         init_eTPSS(&tmp);
         init_eTPSS(&tmp2);
         eTPSS sum;
         init_eTPSS(&sum);
         et_Share(&sum,ZERO);
         for(int i = 0; i < dim ; ++i){
+            printDebugInfo(NULL,root->data->en_data[i],__func__ ,__LINE__,"节点维度的值");
             // 判断是否在范围内，假如到resp中进行返回
             et_Sub_cal_res_o(&tmp,root->data->en_data[i],req->y[i]);
             et_Mul(&tmp2,&tmp,&tmp);
+            printDebugInfo(NULL,&tmp2,__func__ ,__LINE__,"计算维度的值");
             et_Add(&sum, &sum, &tmp2);
         }
         // 判断和第k个距离的大小
         eTPSS * kth_distance = root->distance[req->k - 1];
+
+        printDebugInfo(NULL,kth_distance,__func__ ,__LINE__,"第k个值");
         et_Sub(&res,kth_distance,&sum);
         if(res != 1){
             // 插入队列
@@ -392,21 +423,20 @@ RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int k,set_y 
         init_eTPSS(d);
         et_Share(d,y->single_data[i]);
         req->y[i] = d;
+        printDebugInfo(NULL,d,__func__ ,__LINE__,"查询的参数");
     }
     resp->root = resp->now = NULL;
     return SUCCESS;
 }
 
 // 查询结果的写入
-RESULT mrtree_write_resp(search_req * req, search_resp * resp){
+RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim){
     // 读取resp文件的内容然后写入进去
     FILE  * file = fopen(RESP_DATA_PATH,"w");
     if(file == NULL){
         perror("Error opening file");
         return ERROR;
     }
-    // 写入
-    int dim = (sizeof (req->y)) / (sizeof (eTPSS *));
     BIGNUM * tmp = BN_CTX_get(CTX);
     char *str ;
     fprintf(file,"The search rep\ndim:%d\nreq data: ",dim);
@@ -431,7 +461,7 @@ RESULT mrtree_write_resp(search_req * req, search_resp * resp){
     }
     // 关闭文件
     fclose(file);
-    mrtree_free_search(req,resp);
+    mrtree_free_search(req,resp,dim);
     return SUCCESS;
 }
 RESULT mrtree_init_node(mr_node * node,int dim,int is_left, mr_node * right, mr_node * left,set_x * data,eTPSS ** distance, eTPSS * maxDistance){
@@ -456,8 +486,8 @@ RESULT mrtree_free(mr_tree * tree){
     return SUCCESS;
 }
 // 释放resp的节点
-RESULT mrtree_free_search(search_req * req,search_resp * resp){
-    int dim = sizeof (req->y) / sizeof (eTPSS *);
+RESULT mrtree_free_search(search_req * req,search_resp * resp,int dim){
+
     for(int i = 0 ; i < dim ; ++i){
         free_eTPSS(req->y[i]);
         free(req->y[i]);
@@ -485,12 +515,54 @@ RESULT mrtree_init_origin_node(distance * d,RSQ_data * total,mr_node ** nodes){
         if(node == NULL)
             return ERROR;
         // 将heap转换为etpss **
-        eTPSS  ** dis = (eTPSS **) malloc(d->d[i]->capacity * sizeof (eTPSS *));
+        eTPSS  ** dis = (eTPSS **) malloc(K_MAX * sizeof (eTPSS *));
         for(int j = 0 ; j < K_MAX ; ++j){
-            dis[j] = d->d[i]->array->key;
+            dis[j] = d->d[i]->array[j];
         }
         mrtree_init_node(node,total->dim,TRUE,NULL,NULL,total->en_x[i],dis,dis[K_MAX - 1]);
+
+        // 为range进行赋值
+        for(int j = 0 ; j < total->dim ; ++j){
+            // 最小值
+            node->range[j][0] = (eTPSS *) malloc(sizeof (eTPSS));
+            init_eTPSS(node->range[j][0]);
+            et_Sub_cal_res_o(node->range[j][0],total->en_x[i]->en_data[j],dis[K_MAX - 1]);
+
+            // 最大值
+            node->range[j][1] = (eTPSS *) malloc(sizeof (eTPSS));
+            init_eTPSS(node->range[j][1]);
+            et_Add(node->range[j][1],total->en_x[i]->en_data[j],dis[K_MAX - 1]);
+
+        }
+
         nodes[idx ++] = node;
     }
     return SUCCESS;
+}
+void printShowNodeVal(mr_node **nodes,int size){
+    BIGNUM * tt = BN_CTX_get(CTX);
+    for(int i = 0 ; i < size ; ++i){
+        printf("%d个节点:",i);
+        if(nodes[i]->is_left_ndoe == TRUE){
+            printf("这是一个叶子节点--");
+            for(int j = 0 ; j < nodes[0]->dim ; ++j){
+                et_Recover(tt,nodes[i]->data->en_data[j]);
+                char * str = BN_bn2dec(tt);
+                printf("%s ",str);
+            }
+        }else{
+            printf("这是一个合成的范围节点--");
+            for(int j = 0 ; j < nodes[0]->dim ; ++j){
+                et_Recover(tt,nodes[i]->range[j][0]);
+                char * str = BN_bn2dec(tt);
+                printf("%d维度最小值%s ",j,str);
+                et_Recover(tt,nodes[i]->range[j][1]);
+                str = BN_bn2dec(tt);
+                printf("%d维度最大值%s ",j,str);
+            }
+        }
+        printf("\n");
+    }
+    BN_clear(tt);
+    fflush(stdout);
 }

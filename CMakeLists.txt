@@ -29,5 +29,4 @@ if(OPENSSL_FOUND)
     target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto eTPSS)
     target_link_libraries(mrtree_test OpenSSL::SSL OpenSSL::Crypto eTPSS)
 
-
 endif (OPENSSL_FOUND)

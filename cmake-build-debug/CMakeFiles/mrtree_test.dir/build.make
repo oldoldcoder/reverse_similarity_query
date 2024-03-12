@@ -83,24 +83,10 @@ CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.s"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/heqi/encryption_algorithm/reverse_similarity_query/include/RSQ_data_structure.c -o CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.s
 
-CMakeFiles/mrtree_test.dir/include/hello.c.o: CMakeFiles/mrtree_test.dir/flags.make
-CMakeFiles/mrtree_test.dir/include/hello.c.o: /root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c
-CMakeFiles/mrtree_test.dir/include/hello.c.o: CMakeFiles/mrtree_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/mrtree_test.dir/include/hello.c.o"
-	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mrtree_test.dir/include/hello.c.o -MF CMakeFiles/mrtree_test.dir/include/hello.c.o.d -o CMakeFiles/mrtree_test.dir/include/hello.c.o -c /root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c
-
-CMakeFiles/mrtree_test.dir/include/hello.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/mrtree_test.dir/include/hello.c.i"
-	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c > CMakeFiles/mrtree_test.dir/include/hello.c.i
-
-CMakeFiles/mrtree_test.dir/include/hello.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/mrtree_test.dir/include/hello.c.s"
-	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c -o CMakeFiles/mrtree_test.dir/include/hello.c.s
-
 CMakeFiles/mrtree_test.dir/include/mrtree.c.o: CMakeFiles/mrtree_test.dir/flags.make
 CMakeFiles/mrtree_test.dir/include/mrtree.c.o: /root/heqi/encryption_algorithm/reverse_similarity_query/include/mrtree.c
 CMakeFiles/mrtree_test.dir/include/mrtree.c.o: CMakeFiles/mrtree_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/mrtree_test.dir/include/mrtree.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/mrtree_test.dir/include/mrtree.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mrtree_test.dir/include/mrtree.c.o -MF CMakeFiles/mrtree_test.dir/include/mrtree.c.o.d -o CMakeFiles/mrtree_test.dir/include/mrtree.c.o -c /root/heqi/encryption_algorithm/reverse_similarity_query/include/mrtree.c
 
 CMakeFiles/mrtree_test.dir/include/mrtree.c.i: cmake_force
@@ -114,7 +100,7 @@ CMakeFiles/mrtree_test.dir/include/mrtree.c.s: cmake_force
 CMakeFiles/mrtree_test.dir/include/utils.c.o: CMakeFiles/mrtree_test.dir/flags.make
 CMakeFiles/mrtree_test.dir/include/utils.c.o: /root/heqi/encryption_algorithm/reverse_similarity_query/include/utils.c
 CMakeFiles/mrtree_test.dir/include/utils.c.o: CMakeFiles/mrtree_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/mrtree_test.dir/include/utils.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/mrtree_test.dir/include/utils.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mrtree_test.dir/include/utils.c.o -MF CMakeFiles/mrtree_test.dir/include/utils.c.o.d -o CMakeFiles/mrtree_test.dir/include/utils.c.o -c /root/heqi/encryption_algorithm/reverse_similarity_query/include/utils.c
 
 CMakeFiles/mrtree_test.dir/include/utils.c.i: cmake_force
@@ -128,7 +114,7 @@ CMakeFiles/mrtree_test.dir/include/utils.c.s: cmake_force
 CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o: CMakeFiles/mrtree_test.dir/flags.make
 CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o: /root/heqi/encryption_algorithm/reverse_similarity_query/test/mrtree_test.c
 CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o: CMakeFiles/mrtree_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o -MF CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o.d -o CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o -c /root/heqi/encryption_algorithm/reverse_similarity_query/test/mrtree_test.c
 
 CMakeFiles/mrtree_test.dir/test/mrtree_test.c.i: cmake_force
@@ -142,7 +128,6 @@ CMakeFiles/mrtree_test.dir/test/mrtree_test.c.s: cmake_force
 # Object files for target mrtree_test
 mrtree_test_OBJECTS = \
 "CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.o" \
-"CMakeFiles/mrtree_test.dir/include/hello.c.o" \
 "CMakeFiles/mrtree_test.dir/include/mrtree.c.o" \
 "CMakeFiles/mrtree_test.dir/include/utils.c.o" \
 "CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o"
@@ -151,7 +136,6 @@ mrtree_test_OBJECTS = \
 mrtree_test_EXTERNAL_OBJECTS =
 
 mrtree_test: CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.o
-mrtree_test: CMakeFiles/mrtree_test.dir/include/hello.c.o
 mrtree_test: CMakeFiles/mrtree_test.dir/include/mrtree.c.o
 mrtree_test: CMakeFiles/mrtree_test.dir/include/utils.c.o
 mrtree_test: CMakeFiles/mrtree_test.dir/test/mrtree_test.c.o
@@ -160,7 +144,7 @@ mrtree_test: /usr/lib/aarch64-linux-gnu/libssl.so
 mrtree_test: /usr/lib/aarch64-linux-gnu/libcrypto.so
 mrtree_test: /root/heqi/encryption_algorithm/reverse_similarity_query/libeTPSS.a
 mrtree_test: CMakeFiles/mrtree_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable mrtree_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/root/heqi/encryption_algorithm/reverse_similarity_query/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable mrtree_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mrtree_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -5,11 +5,11 @@ Heap* createHeap(int capacity) {
     Heap* heap = ( Heap* )malloc(sizeof( Heap));
     heap->capacity = capacity;
     heap->size = 0;
-    heap->array = (Node*)malloc(capacity * sizeof(Node));
+    heap->array = (eTPSS **)malloc(capacity * sizeof(eTPSS *));
     // 对于每一个array又需要再次进行初始化内部节点
     for(int i = 0 ; i < capacity ; ++i ){
-        heap->array[i].key = (eTPSS *) malloc(sizeof (eTPSS));
-        init_eTPSS(heap->array[i].key);
+        heap->array[i] = (eTPSS *) malloc(sizeof (eTPSS));
+        init_eTPSS(heap->array[i]);
     }
     return heap;
 }
@@ -19,7 +19,7 @@ void printHeap(Heap* heap) {
     BIGNUM * t = BN_CTX_get(CTX);
     for (int i = 0; i < heap->size; ++i) {
 
-        et_Recover(t,heap->array[i].key);
+        et_Recover(t,heap->array[i]);
         str = BN_bn2dec(t);
         printf("%s ", str);
     }
@@ -31,18 +31,18 @@ void bubleDown(Heap* heap, int index) {
     int largest = index;
     int leftChild = 2*index+1;
     int rightChild = 2*index+2;
-    int res = -1;
+    int res = -2;
     while(leftChild < heap->size) {
-        et_Sub(&res,heap->array[leftChild].key,heap->array[largest].key);
-        if(leftChild < heap->size && res == 1 ) {
+        et_Sub(&res,heap->array[leftChild],heap->array[largest]);
+        if(leftChild < heap->size && res == 0 ) {
             largest = leftChild;
         }
-        et_Sub(&res,heap->array[rightChild].key, heap->array[largest].key);
-        if(rightChild < heap->size &&  res == 1) {
+        et_Sub(&res,heap->array[rightChild], heap->array[largest]);
+        if(rightChild < heap->size &&  res == 0) {
             largest = rightChild;
         }
         if(largest != index) {
-            Node temp = heap->array[index];
+            eTPSS *temp = heap->array[index];
             heap->array[index] = heap->array[largest];
             heap->array[largest] = temp;
             index = largest;
@@ -65,13 +65,15 @@ void bubleUp(Heap* heap, int index) {
     int temp = index;
     int parent = (index-1)/2;
     int res = -1;
-    et_Sub(&res,heap->array[parent].key, heap->array[temp].key);
-    while(res == 0 && parent >= 0) {
-        Node tempNode = heap->array[temp];
+    et_Sub(&res,heap->array[parent], heap->array[temp]);
+    while(res == 1 && parent >= 0) {
+        eTPSS * tempNode = heap->array[temp];
         heap->array[temp] = heap->array[parent];
         heap->array[parent] = tempNode;
         temp = parent;
         parent = (temp-1)/2;
+        if(temp == parent)
+            break;
     }
 }
 
@@ -80,13 +82,13 @@ void insert(Heap* heap, eTPSS * key) {
     if(heap->size < heap->capacity) {
         heap->size++;
         // 直接引用
-        heap->array[heap->size-1].key = key;
+        heap->array[heap->size-1] = key;
         bubleUp(heap,heap->size-1);
     }
 }
 
 void deleteMax(Heap* heap) {
-    struct Node temp;
+    eTPSS * temp;
     if(heap->size>1) {
         temp = heap->array[0];
         heap->array[0] = heap->array[heap->size-1];
@@ -129,5 +131,30 @@ void * bignum_sqrt(BIGNUM  * res,BIGNUM* num) {
     BN_free(quotient);
     BN_free(two);
     return sqrt_result;
+}
+
+void printDebugInfo(BIGNUM * res,eTPSS * et,const char * funcName,int line,char * paramName){
+    if(res == NULL && et == NULL){
+        fprintf(stderr,"%s[%d]:传入参数不符合\n",funcName,line );
+        goto end;
+    }
+    if(res != NULL && et != NULL){
+        fprintf(stderr,"%s[%d]:传入参数不符合\n",funcName,line );
+        goto end;
+    }
+    if(res != NULL){
+        char * str = BN_bn2dec(res);
+        fprintf(stdout,"%s[%d]: %s的值为-->%s\n",funcName,line,paramName,str);
+    }else{
+        BIGNUM * tmp = BN_CTX_get(CTX);
+        et_Recover(tmp,et);
+        char * str = BN_bn2dec(tmp);
+        fprintf(stdout,"%s[%d]: %s的值为-->%s\n",funcName,line,paramName,str);
+        BN_clear(tmp);
+    }
+
+    end:
+    fflush(stdout);
+    fflush(stderr);
 }
 

@@ -1,8 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.o"
   "CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.o.d"
-  "CMakeFiles/mrtree_test.dir/include/hello.c.o"
-  "CMakeFiles/mrtree_test.dir/include/hello.c.o.d"
   "CMakeFiles/mrtree_test.dir/include/mrtree.c.o"
   "CMakeFiles/mrtree_test.dir/include/mrtree.c.o.d"
   "CMakeFiles/mrtree_test.dir/include/utils.c.o"

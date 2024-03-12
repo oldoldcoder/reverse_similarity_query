@@ -15,7 +15,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -30,7 +31,8 @@
 					"name" : "RSQ",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -39,8 +41,15 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "RSQ::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-RSQ-Debug-e22704a823f688762be6.json",
+					"jsonFile" : "target-RSQ-Debug-2f91ece6284379131fae.json",
 					"name" : "RSQ",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mrtree_test::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mrtree_test-Debug-aff46864a2f359c40558.json",
+					"name" : "mrtree_test",
 					"projectIndex" : 0
 				}
 			]

@@ -126,10 +126,6 @@
 			<Option target="RSQ"/>
 			<Option target="mrtree_test"/>
 		</Unit>
-		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/hello.c">
-			<Option target="RSQ"/>
-			<Option target="mrtree_test"/>
-		</Unit>
 		<Unit filename="/root/heqi/encryption_algorithm/reverse_similarity_query/include/mrtree.c">
 			<Option target="RSQ"/>
 			<Option target="mrtree_test"/>

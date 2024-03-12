@@ -6,14 +6,15 @@
 #ifndef RSQ_DATA_STRUCTURE_H
 #define RSQ_DATA_STRUCTURE_H
 
-#include "utils.h"
 #include <openssl/bn.h>
 #include "eTPSS.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "utils.h"
+
 /*---------------常量的定义---------------*/
-#define RSQ_DATA_FILE "/root/heqi/encryption_algorithm/"
+#define RSQ_DATA_FILE "/root/heqi/encryption_algorithm/reverse_similarity_query/data/RSQ_DATA_FILE.txt"
 /*---------------数据结构的定义---------------*/
 // 普通的一个单体数据的定义，内部的维度是d，拥有d维的data数据组
 typedef struct {

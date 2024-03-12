@@ -41,6 +41,17 @@ RESULT RSQ_read_data(RSQ_data * data){
             return ERROR;
         }
     }
+    for(int i = 0 ; i < ylen ; i++){
+        data->open_y[i] = (set_y *) malloc(sizeof (set_y));
+        data->open_y[i]->dim = dim;
+        // 分配内存空间
+        data->open_y[i]->single_data = (BIGNUM **) malloc(dim * sizeof (BIGNUM *));
+
+        if(data->open_y[i] == NULL || data->open_y[i]->single_data == NULL){
+            fprintf(stderr,"Memory allocation failed.\n");
+            return ERROR;
+        }
+    }
     // 先读取x的内容，然后读取y的内容
     int n = 0;
     while (getline(&line, &len, file) != -1) {

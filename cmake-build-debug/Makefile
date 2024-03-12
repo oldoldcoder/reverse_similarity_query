@@ -169,33 +169,6 @@ include/RSQ_data_structure.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/RSQ_data_structure.c.s
 .PHONY : include/RSQ_data_structure.c.s
 
-include/hello.o: include/hello.c.o
-.PHONY : include/hello.o
-
-# target to build an object file
-include/hello.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.o
-.PHONY : include/hello.c.o
-
-include/hello.i: include/hello.c.i
-.PHONY : include/hello.i
-
-# target to preprocess a source file
-include/hello.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.i
-.PHONY : include/hello.c.i
-
-include/hello.s: include/hello.c.s
-.PHONY : include/hello.s
-
-# target to generate assembly for a file
-include/hello.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSQ.dir/build.make CMakeFiles/RSQ.dir/include/hello.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrtree_test.dir/build.make CMakeFiles/mrtree_test.dir/include/hello.c.s
-.PHONY : include/hello.c.s
-
 include/mrtree.o: include/mrtree.c.o
 .PHONY : include/mrtree.o
 
@@ -290,9 +263,6 @@ help:
 	@echo "... include/RSQ_data_structure.o"
 	@echo "... include/RSQ_data_structure.i"
 	@echo "... include/RSQ_data_structure.s"
-	@echo "... include/hello.o"
-	@echo "... include/hello.i"
-	@echo "... include/hello.s"
 	@echo "... include/mrtree.o"
 	@echo "... include/mrtree.i"
 	@echo "... include/mrtree.s"

@@ -12,15 +12,10 @@
 #define TRUE 1
 #define FALSE 0
 #define RESULT int
-
-
 /*--------------堆的实现----------------*/
-typedef struct Node {
-     eTPSS *key;
-} Node;
 
 typedef struct Heap {
-    Node *array;
+    eTPSS **array;
     int size;
     int capacity;
 } Heap;
@@ -36,4 +31,8 @@ void heapSort(Heap* heap);
 /*--------------------------------*/
 
 void * bignum_sqrt(BIGNUM  * res ,BIGNUM* num);
+// 打印调试信息
+void printDebugInfo(BIGNUM * res,eTPSS * et,const char * funcName,int line,char * paramName);
+// 打印查看一个node节点的所有值
+
 #endif // UTILS_H
