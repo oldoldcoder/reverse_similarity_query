@@ -88,7 +88,24 @@ RESULT RSQ_read_data(RSQ_data * data){
 }
 // 对于x数据的解密
 RESULT RSQ_decrypt_setx(RSQ_data * data){
-    // 暂时没有写的必要
+    int xn = data->xn;
+    int dim = data->en_x[0]->dim;
+    for(int i = 0 ; i < xn ; ++i){
+        for(int j = 0; j < dim ; ++j){
+            // 初始化etpss
+            eTPSS * encrypt = data->en_x[i]->en_data[j];
+            if(encrypt == NULL){
+                fprintf(stderr,"%s[%d]错误的数据\n",__func__ ,__LINE__);
+                return ERROR;
+            }
+
+            if(et_Recover(data->en_x[i]->de_data[j],encrypt) != ETPSS_SUCCESS){
+                fprintf(stderr,"et_recover failed!\n");
+                return ERROR;
+            }
+
+        }
+    }
     return SUCCESS;
 }
 // 对于x数据的加密

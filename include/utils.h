@@ -16,16 +16,17 @@
 
 typedef struct Heap {
     eTPSS **array;
+    BIGNUM ** bnArr;
+    int is_encrypt;
     int size;
     int capacity;
 } Heap;
 
-Heap* createHeap(int capacity);
-void printHeap(Heap* heap);
+Heap* createHeap(int capacity,int is_encrypt);
 void bubleDown(Heap* heap, int index);
 void heapify(Heap* heap);
 void bubleUp(Heap* heap, int index);
-void insert(Heap* heap, eTPSS * key);
+void insert(Heap* heap, void * key);
 void deleteMax(Heap* heap);
 void heapSort(Heap* heap);
 // 清空heap

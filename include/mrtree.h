@@ -17,7 +17,7 @@
 /*-------------------定义常量-------------------*/
 #define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/REQ_DATA_FILE.txt"
 #define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/RESP_DATA_FILE.txt"
-#define K_MAX 10
+#define K_MAX 100
 /*-------------------结构定义------------------*/
 
 // 抽象结构,构建mr的树的时候使用的数据

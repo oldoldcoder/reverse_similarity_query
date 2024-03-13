@@ -19,14 +19,14 @@ RESULT mrtree_init_distance(eTPSS ***dis,Heap ** heap,int x_len,int y_len){
         return ERROR;
     }
 
-    *heap = createHeap(y_len);
+    *heap = createHeap(y_len,FALSE);
     for(int i = 0 ; i < x_len ; ++i){
         // 初始化堆结构
         dis[i] = (eTPSS **) malloc(K_MAX * sizeof (eTPSS *));
     }
     return SUCCESS;
 }
-// 计算距离,完毕之后会使用sort方法对于数据进行排序
+/*// 计算距离,完毕之后会使用sort方法对于数据进行排序
 RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
     // 计算距离，注意是密文计算
     int x_len = data->xn;
@@ -71,17 +71,60 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
         }
         heapClear(h);
         // debug打印内容
-        /*for(int j = 0 ; j < dim ; ++j){
+        *//*for(int j = 0 ; j < dim ; ++j){
             printDebugInfo(NULL,dimx[j],__func__ ,__LINE__,"数据为");
         }
         for(int j = 0 ; j < K_MAX ; ++j){
             printDebugInfo(NULL,dis[i][j],__func__ ,__LINE__,"前KMAX距离的数据为");
-        }*/
+        }*//*
     }
 
     heap_free(h,y_len);
     free_eTPSS(ousDis);
     free(ousDis);
+    return SUCCESS;
+}
+ */ // 这里是使用密文加密计算距离的地方
+// 计算距离,完毕之后会使用sort方法对于数据进行排序
+RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
+    // 计算距离，注意是密文计算
+    int x_len = data->xn;
+    int y_len = data->yn;
+    int dim = data->dim;
+    BIGNUM * tmp = BN_CTX_get(CTX);
+    BIGNUM * tmp2 = BN_CTX_get(CTX);
+    BIGNUM * ousDis = BN_CTX_get(CTX);
+    for(int i = 0 ; i < x_len ; ++i){
+        for(int j = 0 ; j < y_len ; ++j){
+            // 重新给0值
+            BN_set_word(ousDis,0);
+            for(int z = 0 ; z < dim; ++z) {
+                BN_sub(tmp,data->en_x[i]->de_data[z],data->open_y[j]->single_data[z]);
+                BN_mul(tmp2,tmp,tmp,CTX);
+                BN_add(ousDis,ousDis,tmp2);
+            }
+            // 插入这个数据点
+            insert(h,ousDis);
+        }
+        // 弹出前k_max个数值，然后我们的情况我们的heap重新填充值
+        clock_t start_time;
+
+        start_time = clock();
+
+        heap_PopK_max_Val(h,K_MAX,dis[i]);
+
+        clock_t end_time = clock();
+        double execution_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC * 1000;
+        printf("%d次：计算距离的时间：%f 毫秒\n", i,execution_time);
+        fflush(stdout);
+
+        heapClear(h);
+    }
+
+    heap_free(h,y_len);
+    BN_clear(tmp);
+    BN_clear(tmp2);
+    BN_clear(ousDis);
     return SUCCESS;
 }
 // 计算不同的x之间的距离

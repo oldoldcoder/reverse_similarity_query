@@ -28,6 +28,10 @@ int main(){
     execution_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC * 1000;
     printf("加密速度：%f 毫秒\n", execution_time);
     fflush(stdout);
+
+    // RSQ_decrypt_setx(&total);
+
+    /*-------------------创建树阶段--------------------*/
     Heap * heap;
     eTPSS  *** dis = (eTPSS ***) malloc(total.xn * sizeof (eTPSS **));
     // 初始化我们的dis的内存空间
@@ -60,7 +64,7 @@ int main(){
     execution_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC * 1000;
     printf("创建树速度：%f 毫秒\n", execution_time);
     fflush(stdout);
-    int k = 9;
+    int k = 20;
     search_req req;
     search_resp  resp;
     start_time = clock();
