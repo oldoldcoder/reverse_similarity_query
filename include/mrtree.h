@@ -17,16 +17,9 @@
 /*-------------------定义常量-------------------*/
 #define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/REQ_DATA_FILE.txt"
 #define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/RESP_DATA_FILE.txt"
-#define K_MAX 3
+#define K_MAX 10
 /*-------------------结构定义------------------*/
-// x数据集对y数据集合的各个点的距离
-typedef struct distance{
-    Heap ** d;
-    // heap的数量
-    int x_len;
-    // heap内数组的长度
-    int y_len;
-} distance;
+
 // 抽象结构,构建mr的树的时候使用的数据
 typedef struct mr_node{
     // 数据
@@ -73,9 +66,9 @@ typedef struct search_resp{
 } search_resp;
 /*------------------方法定义------------------*/
 // 初始化distance
-RESULT mrtree_init_distance(distance * d,int x_len,int y_len);
+RESULT mrtree_init_distance(eTPSS ***dis,Heap ** heap,int x_len,int y_len);
 // 计算距离,完毕之后会使用sort方法对于数据进行排序
-RESULT mrtree_compute_xy_distance(distance * d,RSQ_data * data);
+RESULT mrtree_compute_xy_distance(Heap * d,RSQ_data * data,eTPSS *** dis);
 // 计算不同的x之间的距离
 RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size);
 // 创建MR树的过程，返回的是根节点，自底向上构建树
@@ -94,7 +87,7 @@ RESULT mrtree_free(mr_tree * tree);
 // 释放resp的节点
 RESULT mrtree_free_search(search_req * req,search_resp * resp,int dim);
 // 初始化最初的节点
-RESULT mrtree_init_origin_node(distance * d,RSQ_data * total,mr_node ** nodes);
+RESULT mrtree_init_origin_node(eTPSS *** dis,RSQ_data * total,mr_node ** nodes);
 
 void printShowNodeVal(mr_node **nodes,int);
 #endif// MRTREE_H

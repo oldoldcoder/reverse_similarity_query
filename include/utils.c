@@ -34,11 +34,11 @@ void bubleDown(Heap* heap, int index) {
     int res = -2;
     while(leftChild < heap->size) {
         et_Sub(&res,heap->array[leftChild],heap->array[largest]);
-        if(leftChild < heap->size && res == 0 ) {
+        if(leftChild < heap->size && res == 1 ) {
             largest = leftChild;
         }
         et_Sub(&res,heap->array[rightChild], heap->array[largest]);
-        if(rightChild < heap->size &&  res == 0) {
+        if(rightChild < heap->size &&  res == 1 ) {
             largest = rightChild;
         }
         if(largest != index) {
@@ -66,7 +66,7 @@ void bubleUp(Heap* heap, int index) {
     int parent = (index-1)/2;
     int res = -1;
     et_Sub(&res,heap->array[parent], heap->array[temp]);
-    while(res == 1 && parent >= 0) {
+    while(res == 0 && parent >= 0) {
         eTPSS * tempNode = heap->array[temp];
         heap->array[temp] = heap->array[parent];
         heap->array[parent] = tempNode;
@@ -82,7 +82,7 @@ void insert(Heap* heap, eTPSS * key) {
     if(heap->size < heap->capacity) {
         heap->size++;
         // 直接引用
-        heap->array[heap->size-1] = key;
+        et_Copy(heap->array[heap->size-1],key);
         bubleUp(heap,heap->size-1);
     }
 }
@@ -158,3 +158,30 @@ void printDebugInfo(BIGNUM * res,eTPSS * et,const char * funcName,int line,char 
     fflush(stderr);
 }
 
+
+// 清空heap
+void heapClear(Heap * heap){
+    // 还就是这么简单，然后继续填充值就行
+    heap->size = 0;
+}
+// 弹出前几个值
+void heap_PopK_max_Val(Heap * heap,int k_max,eTPSS ** arr){
+    for(int i = 0 ; i < k_max ; ++i){
+        // 最小值弹向队尾
+        deleteMax(heap);
+        eTPSS * tt = (eTPSS *) malloc(sizeof (eTPSS));
+        init_eTPSS(tt);
+        et_Copy(tt,heap->array[heap->size]);
+        arr[i] = tt;
+    }
+}
+// 释放heap的内存
+void heap_free(Heap * h,int y_len){
+    // 对于堆内存的释放
+    for(int i = 0 ; i < y_len ; ++i){
+        free_eTPSS(h->array[i]);
+        free(h->array[i]);
+    }
+    free(h->array);
+    free(h);
+}

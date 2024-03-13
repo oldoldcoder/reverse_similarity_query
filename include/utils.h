@@ -28,6 +28,12 @@ void bubleUp(Heap* heap, int index);
 void insert(Heap* heap, eTPSS * key);
 void deleteMax(Heap* heap);
 void heapSort(Heap* heap);
+// 清空heap
+void heapClear(Heap * heap);
+// 弹出前几个值
+void heap_PopK_max_Val(Heap * heap,int k_max,eTPSS ** arr);
+// 释放heap的内存
+void heap_free(Heap * h,int y_len);
 /*--------------------------------*/
 
 void * bignum_sqrt(BIGNUM  * res ,BIGNUM* num);
