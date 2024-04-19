@@ -92,6 +92,7 @@ void bubleUp(Heap* heap, int index) {
             parent = (temp-1)/2;
             if(temp == parent)
                 break;
+            et_Sub(&res,heap->array[parent], heap->array[temp]);
         }
     }else{
         res = BN_cmp(heap->bnArr[parent], heap->bnArr[temp]);
@@ -103,6 +104,7 @@ void bubleUp(Heap* heap, int index) {
             parent = (temp-1)/2;
             if(temp == parent)
                 break;
+            res = BN_cmp(heap->bnArr[parent], heap->bnArr[temp]);
         }
     }
 }
@@ -123,7 +125,7 @@ void insert(Heap* heap, void * key) {
 
 void deleteMax(Heap* heap) {
     void * temp;
-    if(heap->size>1) {
+    if(heap->size >= 1) {
         if(heap->is_encrypt == TRUE){
             temp = heap->array[0];
             heap->array[0] = heap->array[heap->size-1];
@@ -224,14 +226,18 @@ void heap_PopK_max_Val(Heap * heap,int k_max,eTPSS ** arr){
 // 释放heap的内存
 void heap_free(Heap * h,int y_len){
     // 对于堆内存的释放
-    for(int i = 0 ; i < y_len ; ++i){
-        if(h->is_encrypt == TRUE){
+
+    if(h->is_encrypt == TRUE){
+        for(int i = 0 ; i < y_len ; ++i) {
             free_eTPSS(h->array[i]);
             free(h->array[i]);
-        }else{
+        }
+    }else{
+        for(int i = 0 ; i < y_len ; ++i) {
             BN_clear(h->bnArr[i]);
         }
     }
+
     if(h->is_encrypt == TRUE){
         free(h->array);
     }else{

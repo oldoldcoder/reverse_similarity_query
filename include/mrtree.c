@@ -1,3 +1,4 @@
+#include <string.h>
 #include "stdio.h"
 #include "mrtree.h"
 #include "utils.h"
@@ -91,6 +92,9 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
     int x_len = data->xn;
     int y_len = data->yn;
     int dim = data->dim;
+    clock_t start_time;
+
+    start_time = clock();
     BIGNUM * tmp = BN_CTX_get(CTX);
     BIGNUM * tmp2 = BN_CTX_get(CTX);
     BIGNUM * ousDis = BN_CTX_get(CTX);
@@ -107,9 +111,7 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
             insert(h,ousDis);
         }
         // 弹出前k_max个数值，然后我们的情况我们的heap重新填充值
-        clock_t start_time;
 
-        start_time = clock();
 
         heap_PopK_max_Val(h,K_MAX,dis[i]);
 
@@ -460,15 +462,46 @@ RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp){
 }
 
 // 初始化查询以及我们的结果
-RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int k,set_y * y ){
+RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim){
+    FILE  * file = fopen(REQ_DATA_PATH,"r");
+    if(file == NULL){
+        perror("Error opening file");
+        return ERROR;
+    }
+    // 从文件读取内容
+    int k;
+    fscanf(file, "%d\n", &k);
     req->k = k;
-    req->y = (eTPSS **) malloc(y->dim * sizeof (eTPSS*));
-    for(int i = 0 ; i < y->dim ; ++i){
+
+    req->y = (eTPSS **) malloc(dim * sizeof (eTPSS*));
+    for(int i = 0 ; i < dim ; ++i){
         eTPSS  * d  = (eTPSS *) malloc(sizeof (eTPSS));
         init_eTPSS(d);
-        et_Share(d,y->single_data[i]);
         req->y[i] = d;
     }
+
+    char *line = NULL;
+    size_t len = 0;
+    getline(&line, &len, file);
+    int idx = 0;
+    char *token = strtok(line, " ");
+    while (token != NULL) {
+        BIGNUM *tmp = BN_CTX_get(CTX);
+        fflush(stdout);
+        // 转换为BIGNUM函数
+        if(!BN_dec2bn(&tmp,token)){
+            fprintf(stdout,"file have some error format about data\n");
+            return ERROR;
+        }
+        et_Share(req->y[idx++],tmp);
+        BN_clear(tmp);
+        token = strtok(NULL, " ");
+    }
+    if(idx != dim){
+        fprintf(stderr,"Error reading data dimension from file\n");
+        return ERROR;
+    }
+
     resp->root = resp->now = NULL;
     return SUCCESS;
 }
@@ -505,7 +538,6 @@ RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim){
     }
     // 关闭文件
     fclose(file);
-    mrtree_free_search(req,resp,dim);
     return SUCCESS;
 }
 RESULT mrtree_init_node(mr_node * node,int dim,int is_left, mr_node * right, mr_node * left,set_x * data,eTPSS ** distance, eTPSS * maxDistance){

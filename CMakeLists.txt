@@ -19,14 +19,11 @@ if(OPENSSL_FOUND)
     add_library(eTPSS STATIC IMPORTED)
     set_property(TARGET eTPSS PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libeTPSS.a)
 
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-
-    add_executable(mrtree_test ${SOURCE_FILES})
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES} main.c)
 
     target_include_directories(${PROJECT_NAME} PUBLIC include)
-    target_include_directories(mrtree_test PUBLIC include)
     # 链接 OpenSSL 库
     target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto eTPSS)
-    target_link_libraries(mrtree_test OpenSSL::SSL OpenSSL::Crypto eTPSS)
+
 
 endif (OPENSSL_FOUND)

@@ -15,8 +15,8 @@
 #include "RSQ_data_structure.h"
 
 /*-------------------定义常量-------------------*/
-#define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/REQ_DATA_FILE.txt"
-#define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/RESP_DATA_FILE.txt"
+#define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/query.txt"
+#define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/res.txt"
 #define K_MAX 100
 /*-------------------结构定义------------------*/
 
@@ -44,7 +44,6 @@ typedef struct mr_node{
 typedef struct mr_tree{
     // mr树的root根
     mr_node  * root;
-
 } mr_tree;
 
 // 定义一个查询请求
@@ -76,7 +75,7 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size);
 // 进行反向查询
 RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp);
 // 初始化查询以及我们的结果
-RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int k,set_y * y);
+RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim);
 // 查询结果的写入
 RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim);
 // 初始化一个叶节点
