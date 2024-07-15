@@ -10,6 +10,70 @@
  第二不，不会再用的我不释，因为它忠，我总不能卸磨杀驴，
  第三不，自定义释放方法的我不释放，因为我追求质朴，只用最原始的free
  * */
+
+/**--------------------JNA调用函数-------------------*/
+EXPORT_SYMBOL RESULT init_algo(char* dataFilePath, RSQ_data* data, mr_tree* tree){
+
+    initialize_Constant();
+    if( RSQ_read_data(data, dataFilePath) != SUCCESS) {
+        return ERROR;
+    }
+ 
+    // 对数据进行加密
+    if( RSQ_encrypt_setx(data) != SUCCESS) {
+        return ERROR;
+    }
+    /*-------------------创建树阶段--------------------*/
+    Heap * heap;
+    eTPSS  *** dis = (eTPSS ***) malloc(data->xn * sizeof (eTPSS **));
+    // 初始化我们的dis的内存空间
+    if(mrtree_init_distance(dis,&heap,data->xn,data->yn) != SUCCESS) {
+        return ERROR;
+    }
+    if(mrtree_compute_xy_distance(heap,data,dis) != SUCCESS) {
+        return ERROR;
+    }
+   
+    // 初始化最初的节点
+    mr_node** nodes = (mr_node**)malloc(data->xn * sizeof(mr_node*));
+    if(mrtree_init_origin_node(dis, data,nodes) != SUCCESS) {
+        return ERROR;
+    }
+    // 释放dis指针，具体dis指针指向的内存空间需要释放树的时候才能释放这些内存
+    free(dis);
+    // 构建树
+    tree->root = mrtree_create_tree(nodes,data->xn);
+    if (tree->root == NULL) {
+        return ERROR;
+    }
+    return SUCCESS;
+}
+EXPORT_SYMBOL RESULT query_algo(RSQ_data* data, mr_tree* tree, char* queryFilePath, char* resultFilePath) {
+    search_req req;
+    search_resp  resp;
+    // 初始化查询
+    if (mrtree_init_query_param(&req, &resp, data->dim, queryFilePath) != SUCCESS) {
+        return ERROR;
+    }
+    if(mrtree_search(tree, &req, &resp) != SUCCESS) {
+        return ERROR;
+    }
+    if(mrtree_write_resp(&req, &resp, data->dim,resultFilePath) != SUCCESS) {
+        return ERROR;
+    }
+    // TODO 释放req和resp的内存内容
+    mrtree_free_search_param(&req, &resp,data->dim);
+
+    return SUCCESS;
+}
+EXPORT_SYMBOL RESULT free_algo( RSQ_data* data, mr_tree* tree){
+
+    K_MAX = -1;
+    RSQ_free(data);
+    //  TODO 关于树的释放逻辑
+    mrtree_free(tree->root);
+    return SUCCESS;
+}
 /*-------------------------方法实现---------------------------*/
 // 初始化distance
 RESULT mrtree_init_distance(eTPSS ***dis,Heap ** heap,int x_len,int y_len){
@@ -92,9 +156,7 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
     int x_len = data->xn;
     int y_len = data->yn;
     int dim = data->dim;
-    clock_t start_time;
 
-    start_time = clock();
     BIGNUM * tmp = BN_CTX_get(CTX);
     BIGNUM * tmp2 = BN_CTX_get(CTX);
     BIGNUM * ousDis = BN_CTX_get(CTX);
@@ -111,15 +173,7 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
             insert(h,ousDis);
         }
         // 弹出前k_max个数值，然后我们的情况我们的heap重新填充值
-
-
         heap_PopK_max_Val(h,K_MAX,dis[i]);
-
-        clock_t end_time = clock();
-        double execution_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC * 1000;
-        printf("%d次：计算距离的时间：%f 毫秒\n", i,execution_time);
-        fflush(stdout);
-
         heapClear(h);
     }
 
@@ -461,18 +515,21 @@ RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp){
     return SUCCESS;
 }
 
+
 // 初始化查询以及我们的结果
-RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim){
-    FILE  * file = fopen(REQ_DATA_PATH,"r");
+RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim, char* queryFilePath){
+    FILE* file;
+    if (queryFilePath != NULL) {
+        file = fopen(queryFilePath, "r");
+    }else {
+        file = fopen(REQ_DATA_PATH, "r");
+    }
     if(file == NULL){
         perror("Error opening file");
         return ERROR;
     }
     // 从文件读取内容
-    int k;
-    fscanf(file, "%d\n", &k);
-    req->k = k;
-
+    req->k = K_MAX;
     req->y = (eTPSS **) malloc(dim * sizeof (eTPSS*));
     for(int i = 0 ; i < dim ; ++i){
         eTPSS  * d  = (eTPSS *) malloc(sizeof (eTPSS));
@@ -507,9 +564,9 @@ RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim){
 }
 
 // 查询结果的写入
-RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim){
+RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim, char* resultPath){
     // 读取resp文件的内容然后写入进去
-    FILE  * file = fopen(RESP_DATA_PATH,"w");
+    FILE* file = fopen(resultPath, "w");
     if(file == NULL){
         perror("Error opening file");
         return ERROR;
@@ -557,8 +614,36 @@ RESULT mrtree_init_node(mr_node * node,int dim,int is_left, mr_node * right, mr_
 }
 
 // 释放内存的点
-RESULT mrtree_free(mr_tree * tree){
-    // 这个要free掉的太多了，实在是多的数不过来
+RESULT mrtree_free(mr_node* root){
+    int dim = root->dim;
+    if (root->is_left_ndoe == TRUE) {
+        for (int i = 0; i < dim; ++i) {
+            free_eTPSS(root->range[i][0]);
+            free_eTPSS(root->range[i][1]);
+            free(root->range[i]);
+        }
+        free(root->range);
+        free(root->distance);
+        free_eTPSS(root->maxDistance);
+        free(root->maxDistance);
+    }
+    else {
+        for (int i = 0; i < dim; ++i) {
+           
+            free_eTPSS(root->range[i][0]);
+            free_eTPSS(root->range[i][1]);
+            free(root->range[i]);
+        }
+        free(root->range);
+    }
+    
+    if (root->left != NULL) {
+        mrtree_free(root->left);
+    }
+    else if(root->right != NULL) {
+        mrtree_free(root->right);
+    }
+    free(root);
     return SUCCESS;
 }
 // 释放resp的节点
@@ -591,9 +676,7 @@ RESULT mrtree_init_origin_node(eTPSS *** dis,RSQ_data * total,mr_node ** nodes){
         if(node == NULL)
             return ERROR;
         // 将heap转换为etpss **
-
         mrtree_init_node(node,total->dim,TRUE,NULL,NULL,total->en_x[i],dis[i],dis[i][K_MAX - 1]);
-
         // 为range进行赋值
         for(int j = 0 ; j < total->dim ; ++j){
             // 最小值
@@ -612,6 +695,25 @@ RESULT mrtree_init_origin_node(eTPSS *** dis,RSQ_data * total,mr_node ** nodes){
     }
     return SUCCESS;
 }
+
+RESULT mrtree_free_search_param(search_req* req, search_resp* resp,int dim) {
+    for (int i = 0; i < dim; ++i) {
+        free_eTPSS(req->y[i]);
+        free(req->y[i]);
+    }
+    free(req->y);
+
+    // 释放resp的参数
+    res_node* node = resp->root;
+    while (node != NULL) {
+        res_node* tmp = node->next;
+        free(node);
+        node = tmp;
+    }
+
+    return SUCCESS;
+}
+
 void printShowNodeVal(mr_node **nodes,int size){
     BIGNUM * tt = BN_CTX_get(CTX);
     for(int i = 0 ; i < size ; ++i){

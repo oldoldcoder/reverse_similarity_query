@@ -226,7 +226,6 @@ void heap_PopK_max_Val(Heap * heap,int k_max,eTPSS ** arr){
 // 释放heap的内存
 void heap_free(Heap * h,int y_len){
     // 对于堆内存的释放
-
     if(h->is_encrypt == TRUE){
         for(int i = 0 ; i < y_len ; ++i) {
             free_eTPSS(h->array[i]);

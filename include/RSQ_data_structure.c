@@ -3,13 +3,19 @@
 #include "string.h"
 #include "RSQ_data_structure.h"
 
-
+int K_MAX = -1;
 /*-------------------------方法实现---------------------------*/
 // 从文件读取数据填充两个set
-RESULT RSQ_read_data(RSQ_data * data){
-    FILE  * file = fopen(RSQ_DATA_FILE,"r");
+RESULT RSQ_read_data(RSQ_data * data,char * dataFilePath){
+    FILE* file;
+    if (dataFilePath != NULL) {
+        file = fopen(dataFilePath, "r");
+    }
+    else {
+        file = fopen(RSQ_DATA_FILE, "r");
+    }
+   
     if(file == NULL){
-
         perror("Error opening file");
         return ERROR;
     }
@@ -18,7 +24,7 @@ RESULT RSQ_read_data(RSQ_data * data){
     // 初始化data
     int xlen , ylen, dim;
     // 读取三个数字
-    fscanf(file, "%d %d %d\n", &xlen,&ylen, &dim); // 读取第一行中的两个数字
+    fscanf(file, "%d %d %d %d\n", &xlen,&ylen, &dim,&K_MAX); // 读取第一行中的两个数字
     data->xn = xlen;
     data->yn = ylen;
     data->dim = dim;

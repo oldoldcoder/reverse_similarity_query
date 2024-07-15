@@ -14,10 +14,7 @@
 #include <stdio.h>
 #include "RSQ_data_structure.h"
 
-/*-------------------定义常量-------------------*/
-#define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/query.txt"
-#define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/res.txt"
-#define K_MAX 100
+
 /*-------------------结构定义------------------*/
 
 // 抽象结构,构建mr的树的时候使用的数据
@@ -63,6 +60,11 @@ typedef struct search_resp{
     res_node * root;
     res_node * now;
 } search_resp;
+
+/**--------------------JNA调用函数-------------------*/
+EXPORT_SYMBOL RESULT init_algo(char* dataFilePath, RSQ_data* data, mr_tree* tree);
+EXPORT_SYMBOL RESULT query_algo(RSQ_data* data, mr_tree* tree, char* queryFilePath, char* resultFilePath);
+EXPORT_SYMBOL RESULT free_algo(RSQ_data* data, mr_tree* tree);
 /*------------------方法定义------------------*/
 // 初始化distance
 RESULT mrtree_init_distance(eTPSS ***dis,Heap ** heap,int x_len,int y_len);
@@ -75,18 +77,19 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size);
 // 进行反向查询
 RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp);
 // 初始化查询以及我们的结果
-RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim);
+RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim,char* queryFilePath);
 // 查询结果的写入
-RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim);
+RESULT mrtree_write_resp(search_req * req, search_resp * resp,int dim,char * resultPath);
 // 初始化一个叶节点
 RESULT mrtree_init_node(mr_node * node,int dim,int is_left, mr_node * right, mr_node * left,set_x * data,eTPSS ** distance, eTPSS * maxDistance);
 
 // 释放内存的点
-RESULT mrtree_free(mr_tree * tree);
+RESULT mrtree_free(mr_node* root);
 // 释放resp的节点
 RESULT mrtree_free_search(search_req * req,search_resp * resp,int dim);
 // 初始化最初的节点
 RESULT mrtree_init_origin_node(eTPSS *** dis,RSQ_data * total,mr_node ** nodes);
-
+// 清除查询的时候申请的内存
+RESULT mrtree_free_search_param(search_req * req,search_resp * resp,int dim);
 void printShowNodeVal(mr_node **nodes,int);
 #endif// MRTREE_H

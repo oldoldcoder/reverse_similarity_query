@@ -1,29 +1,49 @@
 cmake_minimum_required(VERSION 3.25)
-project(RSQ C)
+project(reverse_similarity_query C)
 
 set(CMAKE_C_STANDARD 11)
 # 设置编译选项
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 # 添加源文件目录
+set(OPENSSL_INCLUDE_DIR "D:\\software\\lib\\OpenSSL\\include")
+set(OPENSSL_CRYPTO_LIBRARY "D:\\software\\lib\\OpenSSL\\lib\\vc\\x64\\MT\\libcrypto_static.lib")
+set(OPENSSL_SSL_LIBRARY "D:\\software\\lib\\OpenSSL\\lib\\vc\\x64\\MT\\libssl_static.lib")
 aux_source_directory(include SOURCE_FILES)
 aux_source_directory(test SOURCE_FILES)
-#定义两个变量，表示头文件路径和库路径
-find_package(OpenSSL REQUIRED)
-# 显示的包含头文件
-include_directories(include)
+include_directories(include ${OPENSSL_INCLUDE_DIR})
 
 
-if(OPENSSL_FOUND)
-    # 添加 libeTPSS.a 静态库
-    add_library(eTPSS STATIC IMPORTED)
-    set_property(TARGET eTPSS PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libeTPSS.a)
-
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} main.c)
-
-    target_include_directories(${PROJECT_NAME} PUBLIC include)
-    # 链接 OpenSSL 库
-    target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto eTPSS)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} include/eTPSS.c)
+add_executable(mrtree_test ${SOURCE_FILES} include/eTPSS.c)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(mrtree_test PUBLIC include)
+# 链接 OpenSSL 库
+target_link_libraries(${PROJECT_NAME}  ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ws2_32 Crypt32)
+target_link_libraries(mrtree_test ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ws2_32 Crypt32)
 
 
-endif (OPENSSL_FOUND)
+#----------------------------------------------------------------------------------------------------------------
+
+
+#cmake_minimum_required(VERSION 3.25)
+#project(reverse_similarity_query C)
+#
+#set(CMAKE_C_STANDARD 11)
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+#
+## 强制使用静态链接的 OpenSSL 库
+#set(OPENSSL_INCLUDE_DIR "D:\\software\\lib\\OpenSSL\\include")
+#set(OPENSSL_CRYPTO_LIBRARY "D:\\software\\lib\\OpenSSL\\lib\\vc\\x64\\MT\\libcrypto_static.lib")
+#set(OPENSSL_SSL_LIBRARY "D:\\software\\lib\\OpenSSL\\lib\\vc\\x64\\MT\\libssl_static.lib")
+#
+#aux_source_directory(include SOURCE_FILES)
+#include_directories(include ${OPENSSL_INCLUDE_DIR})
+#
+#
+## 编译为动态链接库（DLL）
+#add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} include/eTPSS.c)
+#set_target_properties(${PROJECT_NAME} PROPERTIES
+#        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+## 链接 OpenSSL 和 eTPSS 库
+#target_link_libraries(${PROJECT_NAME}  ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ws2_32 Crypt32)

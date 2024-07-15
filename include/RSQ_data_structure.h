@@ -15,6 +15,10 @@
 
 /*---------------常量的定义---------------*/
 #define RSQ_DATA_FILE "/root/heqi/encryption_algorithm/reverse_similarity_query/data/data.txt"
+#define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/query.txt"
+#define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/res.txt"
+// 定义KMAX的量,在初始化的时候赋值
+extern int K_MAX;
 /*---------------数据结构的定义---------------*/
 // 普通的一个单体数据的定义，内部的维度是d，拥有d维的data数据组
 typedef struct {
@@ -38,7 +42,7 @@ typedef struct {
 
 /*--------------函数过程的定义---------------*/
 // 从文件读取数据填充两个set
-RESULT RSQ_read_data(RSQ_data * data);
+RESULT RSQ_read_data(RSQ_data * data,char * dataFilePath);
 // 对于x数据的解密
 RESULT RSQ_decrypt_setx(RSQ_data * data);
 // 对于x数据的加密
