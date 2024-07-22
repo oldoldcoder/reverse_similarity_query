@@ -39,13 +39,15 @@ EXPORT_SYMBOL RESULT init_algo(char* dataFilePath, RSQ_data* data, mr_tree* tree
     if(mrtree_init_origin_node(dis, data,nodes) != SUCCESS) {
         return ERROR;
     }
-    // 释放dis指针，具体dis指针指向的内存空间需要释放树的时候才能释放这些内存
-    free(dis);
+
     // 构建树
     tree->root = mrtree_create_tree(nodes,data->xn);
     if (tree->root == NULL) {
         return ERROR;
     }
+    heap_free(heap,data->yn);
+    // 释放dis指针，具体dis指针指向的内存空间需要释放树的时候才能释放这些内存
+    free(dis);
     return SUCCESS;
 }
 EXPORT_SYMBOL RESULT query_algo(RSQ_data* data, mr_tree* tree, char* queryFilePath, char* resultFilePath) {
@@ -161,7 +163,9 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
     BIGNUM * tmp2 = BN_CTX_get(CTX);
     BIGNUM * ousDis = BN_CTX_get(CTX);
     for(int i = 0 ; i < x_len ; ++i){
+        printf("i:%d\n",i);
         for(int j = 0 ; j < y_len ; ++j){
+
             // 重新给0值
             BN_set_word(ousDis,0);
             for(int z = 0 ; z < dim; ++z) {
@@ -177,7 +181,7 @@ RESULT mrtree_compute_xy_distance(Heap * h,RSQ_data * data,eTPSS *** dis){
         heapClear(h);
     }
 
-    heap_free(h,y_len);
+
     BN_clear(tmp);
     BN_clear(tmp2);
     BN_clear(ousDis);
@@ -223,6 +227,7 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     BIGNUM * two = BN_CTX_get(CTX);
     BN_set_word(two,2);
     for(int i = 0 ; i < size; ++i) {
+        printf("i:%d\n",i);
         if(choose[i] == 1)
             continue;
         et_Share(&min,init_min);

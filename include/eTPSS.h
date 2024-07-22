@@ -24,6 +24,8 @@
 #define EXPORT_SYMBOL __attribute__((visibility("default")))
 #endif
 
+
+
 #if defined(_WIN32)
 #include <direct.h>
 #define mkdir _mkdir
@@ -49,7 +51,7 @@ extern BIGNUM* RANDOM_RANGE;
 extern BIGNUM* ZERO;
 extern BIGNUM* ONE;
 
-size_t getline(char** lineptr, size_t* n, FILE* stream);
+//size_t getline(char** lineptr, size_t* n, FILE* stream);
 
 /*
  * @desc:初始化MOD的值
