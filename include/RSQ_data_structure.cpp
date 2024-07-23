@@ -2,7 +2,7 @@
 #include "utils.h"
 #include "string.h"
 #include "RSQ_data_structure.h"
-
+#include "iostream"
 int K_MAX = -1;
 /*-------------------------方法实现---------------------------*/
 // 从文件读取数据填充两个set
@@ -103,6 +103,14 @@ RESULT RSQ_read_data(RSQ_data * data,char * dataFilePath){
             for(int j = i * chunk ; j < limit ; ++j){
                 vec->push_back(data->en_x[j]);
             }
+//            cout<< "i : " << i << endl;
+//            for(auto it : *vec){
+//                for(int j = 0; j < dim; ++j){
+//                    char * str = BN_bn2dec(it->de_data[j]);
+//                    cout<< str << " ";
+//                }
+//                cout << endl;
+//            }
             // 存入
             data->batch->push_back(vec);
         }
@@ -117,36 +125,49 @@ RESULT RSQ_read_data(RSQ_data * data,char * dataFilePath){
 }
 // 对于x数据的解密
 RESULT RSQ_decrypt_setx(RSQ_data * data){
-    int xn = data->xn;
-    int dim = data->en_x[0]->dim;
-    for(int i = 0 ; i < xn ; ++i){
-        for(int j = 0; j < dim ; ++j){
-            // 初始化etpss
-            eTPSS * encrypt = data->en_x[i]->en_data[j];
-            if(encrypt == NULL){
-                fprintf(stderr,"%s[%d]错误的数据\n",__func__ ,__LINE__);
-                return ERROR;
+    if(data->is_mul_thread_flag == TRUE){
+        cerr << "mul_thread_decrypt is not write" <<endl;
+    }else{
+        int xn = data->xn;
+        int dim = data->en_x[0]->dim;
+        for(int i = 0 ; i < xn ; ++i){
+            for(int j = 0; j < dim ; ++j){
+                // 初始化etpss
+                eTPSS * encrypt = data->en_x[i]->en_data[j];
+                if(encrypt == NULL){
+                    fprintf(stderr,"%s[%d]错误的数据\n",__func__ ,__LINE__);
+                    return ERROR;
+                }
+                if(et_Recover(data->en_x[i]->de_data[j],encrypt) != ETPSS_SUCCESS){
+                    fprintf(stderr,"et_recover failed!\n");
+                    return ERROR;
+                }
             }
-
-            if(et_Recover(data->en_x[i]->de_data[j],encrypt) != ETPSS_SUCCESS){
-                fprintf(stderr,"et_recover failed!\n");
-                return ERROR;
-            }
-
         }
+        return SUCCESS;
     }
-    return SUCCESS;
 }
 // 对于x数据的加密
 RESULT RSQ_encrypt_setx(RSQ_data * data){
-    // 从de_data加密到en_data去,逐行加密，逐维度加密
-    int xn = data->xn;
-    int dim = data->en_x[0]->dim;
 
+
+    /*for(int i = 0 ; i < THREAD_NUM ; ++i){
+        cout<< "i : " << i << endl;
+        for(int j = 0 ; j < (*data->batch)[0]->size() ; ++j)
+            for(int z = 0 ; z < 4 ; ++z){
+                char * str = BN_bn2dec((*(*data->batch)[i])[j]->de_data[z]);
+                cout<< str << " ";
+
+            }
+        cout << endl;
+    }*/
+
+    // 从de_data加密到en_data去,逐行加密，逐维度加密
+    int dim = data->dim;
     // 如果是多线程模式则对于另外一个数据进行加密
     if(data->is_mul_thread_flag == TRUE){
 
-        for(int i = 0 ; i < data->batch->size() ; ++i){
+        for(int i = 0 ; i < THREAD_NUM ; ++i){
             for(int j = 0 ; j < (*data->batch)[0]->size() ; ++j){
                 for(int z = 0 ; z < dim ; ++z){
                     eTPSS * encrypt = (eTPSS * ) malloc(sizeof (eTPSS));
@@ -155,17 +176,17 @@ RESULT RSQ_encrypt_setx(RSQ_data * data){
                         return ERROR;
                     }
                     init_eTPSS(encrypt);
-
                     if(et_Share(encrypt,(*(*data->batch)[i])[j]->de_data[z]) != ETPSS_SUCCESS){
                         fprintf(stderr,"et_Share failed!\n");
                         return ERROR;
                     }
                     // 填充过去
-                    data->en_x[i]->en_data[j] = encrypt;
+                     (*(*data->batch)[i])[j]->en_data[z] = encrypt;
                 }
             }
         }
     }else{
+        int xn = data->xn;
         for(int i = 0 ; i < xn ; ++i){
             for(int j = 0; j < dim ; ++j){
                 // 初始化etpss
@@ -179,7 +200,7 @@ RESULT RSQ_encrypt_setx(RSQ_data * data){
                     fprintf(stderr,"et_Share failed!\n");
                     return ERROR;
                 }
-
+                data->en_x[i]->en_data[j] = encrypt;
             }
         }
     }

@@ -22,14 +22,14 @@ int main(){
     clock_t start, end;
     start = clock();
 
-    init_algo("/root/heqi/encryption_algorithm/reverse_similarity_query/data/RSQ_DATA_FILE.txt", &data, &tree);
+    init_algo("/root/heqi/encryption_algorithm/reverse_similarity_query/data/data.txt", &data, &tree);
     printfTime("init ", start);
     // 进行查询
     start = clock();
     query_algo(&data, &tree, "/root/heqi/encryption_algorithm/reverse_similarity_query/data/REQ_DATA_FILE.txt", "/root/heqi/encryption_algorithm/reverse_similarity_query/data/RESP_DATA_FILE.txt");
     printfTime("query ", start);
     // 释放内容 TODO 树的内容还没有释放
-    free_algo(&data, &tree);
+    //free_algo(&data, &tree);
 
     return 0;
 }

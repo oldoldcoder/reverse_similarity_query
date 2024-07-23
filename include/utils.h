@@ -12,7 +12,7 @@
 #define TRUE 1
 #define FALSE 0
 #define RESULT int
-#define THREAD_NUM 20
+#define THREAD_NUM 80
 
 /*--------------堆的实现----------------*/
 

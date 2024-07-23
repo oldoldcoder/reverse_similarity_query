@@ -95,7 +95,7 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size);
 // 创建MR树的过程，返回的是根节点，自底向上构建树
 mr_node * mrtree_create_tree(mr_node ** nodes,int size);
 // 进行反向查询
-RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp);
+RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp,vector<search_resp *> * vec);
 // 初始化查询以及我们的结果
 RESULT mrtree_init_query_param(search_req * req, search_resp * resp,int dim,char* queryFilePath);
 // 查询结果的写入

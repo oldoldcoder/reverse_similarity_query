@@ -40,7 +40,7 @@ mr_node * threadTask(RSQ_data * data,int id) {
     // 释放dis指针，具体dis指针指向的内存空间需要释放树的时候才能释放这些内存
     free(dis);
 
-    return mrtree_create_tree(nodes,data->xn);
+    return mrtree_create_tree(nodes,(*data->batch)[id]->size());
 }
 
 /**--------------------JNA调用函数-------------------*/
@@ -102,16 +102,52 @@ EXPORT_SYMBOL RESULT init_algo(char* dataFilePath, RSQ_data* data, mr_tree* tree
 
     return SUCCESS;
 }
+
+void mergeRespAndFreeVec(search_resp * total,vector<search_resp *> * vec){
+    for(auto it : *vec){
+        auto a = it->root;
+        while(a != NULL){
+            if (total->root == NULL){
+                total->root = a;
+                total->now = a;
+            }else{
+                total->now->next = a;
+                total->now = a;
+            }
+            res_node *temp = a;
+            a = a->next;
+            temp->next = NULL;
+        }
+
+        free(it);
+        it = NULL;
+    }
+}
+
 EXPORT_SYMBOL RESULT query_algo(RSQ_data* data, mr_tree* tree, char* queryFilePath, char* resultFilePath) {
     search_req req;
-    search_resp  resp;
+    search_resp resp;
     // 初始化查询
     if (mrtree_init_query_param(&req, &resp, data->dim, queryFilePath) != SUCCESS) {
         return ERROR;
     }
-    if(mrtree_search(tree, &req, &resp) != SUCCESS) {
+    vector<search_resp *> * vec;
+    int ret = -2;
+    if(tree->is_mul_thread_flag == TRUE){
+        vec = new vector<search_resp *>;
+        ret =
+                mrtree_search(tree, &req, &resp,vec);
+    }else{
+        ret =
+                mrtree_search(tree, &req, &resp,NULL);
+    }
+    if(ret != SUCCESS) {
         return ERROR;
     }
+
+    // 合并resp为同一个然后写入
+    mergeRespAndFreeVec(&resp,vec);
+
     if(mrtree_write_resp(&req, &resp, data->dim,resultFilePath) != SUCCESS) {
         return ERROR;
     }
@@ -208,11 +244,13 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
     // 计算距离，注意是密文计算
     int y_len = data->yn;
     int dim = data->dim;
-    BIGNUM * tmp = BN_CTX_get(CTX);
-    BIGNUM * tmp2 = BN_CTX_get(CTX);
-    BIGNUM * ousDis = BN_CTX_get(CTX);
 
     auto tempCtx = BN_CTX_new();
+    BN_CTX_start(tempCtx);
+    BIGNUM * tmp = BN_CTX_get(tempCtx);
+    BIGNUM * tmp2 = BN_CTX_get(tempCtx);
+    BIGNUM * ousDis = BN_CTX_get(tempCtx);
+
     if(data->is_mul_thread_flag == TRUE){
         int x_len = (*data->batch)[id]->size();
         for(int i = 0 ; i < x_len ; ++i){
@@ -221,7 +259,7 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
                 BN_set_word(ousDis,0);
                 for(int z = 0 ; z < dim; ++z) {
                     BN_sub(tmp,(*(*data->batch)[id])[i]->de_data[z],data->open_y[j]->single_data[z]);
-                    BN_mul(tmp2,tmp,tmp,CTX);
+                    BN_mul(tmp2,tmp,tmp,tempCtx);
                     BN_add(ousDis,ousDis,tmp2);
                 }
                 BIGNUM  * temp = BN_CTX_get(tempCtx);
@@ -230,10 +268,7 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
                 if (maxHeap->size() < K_MAX) {
                     maxHeap->push(temp);
                 } else if (BN_cmp(maxHeap->top(), temp) > 0) {
-                    char * str = BN_bn2dec(maxHeap->top());
-                    str = BN_bn2dec(temp);
                     maxHeap->pop();
-
                     maxHeap->push(temp);
                 }
             }
@@ -250,7 +285,7 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
 
                 BIGNUM  * temp = maxHeap->top();
                 maxHeap->pop();
-                dis[i][K_MAX - z -1] = BN_CTX_get(CTX);
+                dis[i][K_MAX - z -1] = BN_new();
                 BN_copy(dis[i][K_MAX - z - 1],temp);
                 /*char * str = BN_bn2dec(temp);
                 cout<<str<< " ";*/
@@ -280,8 +315,7 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
                 if (maxHeap->size() < K_MAX) {
                     maxHeap->push(temp);
                 } else if (BN_cmp(maxHeap->top(), temp) > 0) {
-                    char * str = BN_bn2dec(maxHeap->top());
-                    str = BN_bn2dec(temp);
+
                     maxHeap->pop();
 
                     maxHeap->push(temp);
@@ -313,11 +347,8 @@ RESULT mrtree_compute_xy_distance(priority_queue<BIGNUM*, std::vector<BIGNUM*>, 
             }
         }
     }
+    BN_CTX_end(tempCtx);
     BN_CTX_free(tempCtx);
-
-    BN_clear(tmp);
-    BN_clear(tmp2);
-    BN_clear(ousDis);
     return SUCCESS;
 }
 
@@ -328,7 +359,6 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     int dim = nodes[0]->dim;
     int n = size;
     int * choose = (int *) malloc(sizeof (int) * n);
-    int res = -1;
 
     int idxJ = -1;
     // 初始化
@@ -358,11 +388,10 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     BIGNUM * init_min = BN_CTX_get(ctxx);
     BN_set_word(init_min,999999999999L);
 
-    BIGNUM * two = BN_CTX_get(CTX);
+    BIGNUM * two = BN_CTX_get(ctxx);
     BN_set_word(two,2);
 
     for(int i = 0 ; i < size; ++i) {
-        cout << "i: "<< i << endl;
         if(choose[i] == 1)
             continue;
         BN_set_word(min,999999999999L);
@@ -503,7 +532,6 @@ RESULT mrtree_compute_inner_distance(int * map,mr_node ** nodes,int size){
     free(targetC);
     free(targetD);
 
-    BN_clear(two);
     return SUCCESS;
 
 }
@@ -513,8 +541,6 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size){
     //printShowNodeVal(nodes,size);
     if(size == 1)
         return nodes[0];
-    int res = -1;
-
     // 首先计算如何合并
     int * map = (int *) malloc(sizeof(int) *size);
     for(int i = 0 ; i < size ; ++i){
@@ -552,8 +578,8 @@ mr_node * mrtree_create_tree(mr_node ** nodes,int size){
         mr_node * newNode = (mr_node *) malloc(sizeof (mr_node));
         mrtree_init_node(newNode,targetA->dim,FALSE,targetA,targetB,NULL,NULL,NULL);
         for(int j = 0 ; j < newNode->dim ; ++ j){
-            BIGNUM * min = BN_CTX_get(CTX);
-            BIGNUM  * max = BN_CTX_get(CTX);;
+            BIGNUM * min = BN_new();
+            BIGNUM  * max = BN_new();;
             if(BN_cmp(targetA->o_range[j][0],targetB->o_range[j][0]) > 0){
                 BN_copy(min,targetB->o_range[j][0]);
             }else{
@@ -635,17 +661,38 @@ void mrtree_search_o(mr_node* root,search_req * req, search_resp * resp){
         mrtree_search_o(root->left,req,resp);
         mrtree_search_o(root->right,req,resp);
     }
-    return;
+
 }
+// 查询时候多线程的任务
+search_resp * threadTask2(mr_node * root,search_req * req){
+    auto * resp = (search_resp * )malloc(sizeof (search_resp));
+    resp->root = resp->now = NULL;
+    mrtree_search_o(root,req,resp);
+    return resp;
+}
+
 // 进行反向查询
-RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp){
+RESULT mrtree_search(mr_tree * tree,search_req * req, search_resp * resp,vector<search_resp *> * vec){
     if(tree->root == NULL)
         return ERROR;
     // 可以不用查了，k大于了我们设定的kmax值
     if(req->k > K_MAX){
         cerr << "k > K_MAX"<<endl;
     }
-    mrtree_search_o(tree->root,req,resp);
+    if(tree->is_mul_thread_flag == TRUE){
+        vector<future<search_resp * >> futures;
+        futures.reserve(THREAD_NUM);
+        for(auto it : tree->roots){
+            futures.push_back(async(std::launch::async,threadTask2,it,req));
+        }
+        // 存入
+        for(int i = 0 ; i < THREAD_NUM; ++i){
+            vec->push_back(futures[i].get());
+        }
+    }else{
+        mrtree_search_o(tree->root,req,resp);
+    }
+
     return SUCCESS;
 }
 
@@ -840,10 +887,10 @@ RESULT mrtree_init_origin_node(BIGNUM  *** dis,RSQ_data * total,mr_node ** nodes
             // 为range进行赋值
             for(int j = 0 ; j < total->dim ; ++j){
                 // 最小值
-                node->o_range[j][0] = BN_CTX_get(CTX);
+                node->o_range[j][0] = BN_new();
                 BN_sub(node->o_range[j][0],(*(*total->batch)[id])[i]->de_data[j],dis[i][K_MAX - 1]);
                 // 最大值
-                node->o_range[j][1] = BN_CTX_get(CTX);
+                node->o_range[j][1] = BN_new();
                 BN_add(node->o_range[j][1],(*(*total->batch)[id])[i]->de_data[j],dis[i][K_MAX - 1]);
             }
             nodes[idx ++] = node;

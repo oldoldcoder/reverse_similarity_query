@@ -69,7 +69,7 @@ if(OPENSSL_FOUND)
     target_include_directories(${PROJECT_NAME} PUBLIC include)
     target_include_directories(mrtree_test PUBLIC include)
     # 链接 OpenSSL 库
-    target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto)
-    target_link_libraries(mrtree_test OpenSSL::SSL OpenSSL::Crypto)
+    target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto pthread)
+    target_link_libraries(mrtree_test OpenSSL::SSL OpenSSL::Crypto pthread)
 
 endif (OPENSSL_FOUND)
