@@ -12,13 +12,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
-
+#include "vector"
 /*---------------常量的定义---------------*/
 #define RSQ_DATA_FILE "/root/heqi/encryption_algorithm/reverse_similarity_query/data/data.txt"
 #define REQ_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/query.txt"
 #define RESP_DATA_PATH "/root/heqi/encryption_algorithm/reverse_similarity_query/data/res.txt"
 // 定义KMAX的量,在初始化的时候赋值
 extern int K_MAX;
+using namespace std;
 /*---------------数据结构的定义---------------*/
 // 普通的一个单体数据的定义，内部的维度是d，拥有d维的data数据组
 typedef struct {
@@ -38,6 +39,10 @@ typedef struct {
     int dim; // 维度是相同的
     set_x ** en_x;
     set_y ** open_y;
+
+    vector<vector<set_x * > *> * batch;
+    // 是否使用多线程的flag
+    int is_mul_thread_flag;
 }RSQ_data;
 
 /*--------------函数过程的定义---------------*/

@@ -89,6 +89,29 @@ RESULT RSQ_read_data(RSQ_data * data,char * dataFilePath){
         return ERROR;
     }
 
+    if(data->xn >= 10000){
+        data->is_mul_thread_flag = TRUE;
+        int chunk = data->xn / THREAD_NUM;
+        // 开辟空间准备存储
+        data->batch = new vector<vector<set_x *>*>;
+        for(int i = 0 ; i < THREAD_NUM ; i ++){
+            int limit = (i + 1) * chunk;
+            if(i + 1 == THREAD_NUM){
+                limit = data->xn;
+            }
+            auto * vec = new vector<set_x *>;
+            for(int j = i * chunk ; j < limit ; ++j){
+                vec->push_back(data->en_x[j]);
+            }
+            // 存入
+            data->batch->push_back(vec);
+        }
+    }else{
+        data->batch = NULL;
+        data->is_mul_thread_flag = FALSE;
+    }
+
+
     fclose(file);
     return SUCCESS;
 }
@@ -119,23 +142,49 @@ RESULT RSQ_encrypt_setx(RSQ_data * data){
     // 从de_data加密到en_data去,逐行加密，逐维度加密
     int xn = data->xn;
     int dim = data->en_x[0]->dim;
-    for(int i = 0 ; i < xn ; ++i){
-        for(int j = 0; j < dim ; ++j){
-            // 初始化etpss
-            eTPSS * encrypt = (eTPSS * ) malloc(sizeof (eTPSS));
-            if(encrypt == NULL){
-                fprintf(stderr,"Memory allocation failed.\n");
-                return ERROR;
+
+    // 如果是多线程模式则对于另外一个数据进行加密
+    if(data->is_mul_thread_flag == TRUE){
+
+        for(int i = 0 ; i < data->batch->size() ; ++i){
+            for(int j = 0 ; j < (*data->batch)[0]->size() ; ++j){
+                for(int z = 0 ; z < dim ; ++z){
+                    eTPSS * encrypt = (eTPSS * ) malloc(sizeof (eTPSS));
+                    if(encrypt == NULL){
+                        fprintf(stderr,"Memory allocation failed.\n");
+                        return ERROR;
+                    }
+                    init_eTPSS(encrypt);
+
+                    if(et_Share(encrypt,(*(*data->batch)[i])[j]->de_data[z]) != ETPSS_SUCCESS){
+                        fprintf(stderr,"et_Share failed!\n");
+                        return ERROR;
+                    }
+                    // 填充过去
+                    data->en_x[i]->en_data[j] = encrypt;
+                }
             }
-            init_eTPSS(encrypt);
-            if(et_Share(encrypt,data->en_x[i]->de_data[j]) != ETPSS_SUCCESS){
-                fprintf(stderr,"et_Share failed!\n");
-                return ERROR;
+        }
+    }else{
+        for(int i = 0 ; i < xn ; ++i){
+            for(int j = 0; j < dim ; ++j){
+                // 初始化etpss
+                eTPSS * encrypt = (eTPSS * ) malloc(sizeof (eTPSS));
+                if(encrypt == NULL){
+                    fprintf(stderr,"Memory allocation failed.\n");
+                    return ERROR;
+                }
+                init_eTPSS(encrypt);
+                if(et_Share(encrypt,data->en_x[i]->de_data[j]) != ETPSS_SUCCESS){
+                    fprintf(stderr,"et_Share failed!\n");
+                    return ERROR;
+                }
+
             }
-            // 填充过去
-            data->en_x[i]->en_data[j] = encrypt;
         }
     }
+
+
     return SUCCESS;
 }
 // 释放做占用的空间数据

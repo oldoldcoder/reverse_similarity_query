@@ -48,10 +48,10 @@
 #target_link_libraries(${PROJECT_NAME}  ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ws2_32 Crypt32)
 
 cmake_minimum_required(VERSION 3.25)
-project(reverse_similarity_query C)
+project(reverse_similarity_query CXX)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 #定义两个变量，表示头文件路径和库路径
 find_package(OpenSSL REQUIRED)
 
@@ -62,9 +62,9 @@ aux_source_directory(test SOURCE_FILES)
 include_directories(include)
 
 if(OPENSSL_FOUND)
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} include/eTPSS.c)
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES} include/eTPSS.cpp)
 
-    add_executable(mrtree_test ${SOURCE_FILES} include/eTPSS.c)
+    add_executable(mrtree_test ${SOURCE_FILES} include/eTPSS.cpp)
 
     target_include_directories(${PROJECT_NAME} PUBLIC include)
     target_include_directories(mrtree_test PUBLIC include)
